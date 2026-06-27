@@ -1,97 +1,106 @@
 # Pokedex CLI
 
-A command-line Pokédex application built with Go that allows you to explore Pokémon data from the PokéAPI.
+A command-line Pokédex application built with Go that lets you browse Pokémon location areas, explore encounters, and catch Pokémon from the PokéAPI.
 
 ## Features
 
-- **Interactive REPL Interface**: Explore Pokémon data through an interactive command-line interface
-- **Location Browsing**: Navigate through Pokémon location areas with pagination support
-- **Caching System**: Built-in caching to improve performance and reduce API calls
-- **Help Command**: Get guidance on available commands
+- Interactive REPL experience for entering commands
+- Browse Pokémon location areas with pagination using `map` and `mapb`
+- Explore a specific location area with `explore`
+- Catch Pokémon and store them in your local Pokédex
+- Inspect caught Pokémon details such as stats, abilities, and types
+- Built-in HTTP caching to reduce repeated API requests
 
-## Commands
+## Requirements
 
-- `help` - Display available commands
-- `map` - Show the next location areas
-- `mapb` - Show the previous location areas (go back)
-- `exit` - Exit the application
+- Go 1.26.4 or newer
+- Internet access for fetching data from the PokéAPI
 
-## Building
+## Quick start
+
+Clone the repository and build the binary:
 
 ```bash
-go build
+git clone https://github.com/summati/pokedexcli.git
+cd pokedexcli
+go build -o pokedexcli .
 ```
 
-This will create a `pokedexcli` executable in the current directory.
-
-## Running
+Run it locally:
 
 ```bash
 ./pokedexcli
 ```
 
-Then use the interactive REPL to explore:
+To install it system-wide on macOS or Linux:
 
-```
-Pokedex > map
-Pokedex > exit
+```bash
+sudo mv pokedexcli /usr/local/bin/
+pokedexcli
 ```
 
-## Project Structure
+## Available commands
 
+- `help` - Show the available commands
+- `map` - Show the next page of location areas
+- `mapb` - Show the previous page of location areas
+- `explore {location_name}` - List Pokémon found in a location area
+- `catch {pokemon_name}` - Try to catch a Pokémon
+- `inspect {pokemon_name}` - Show details for a caught Pokémon
+- `pokedex` - List the Pokémon currently stored in your Pokédex
+- `exit` - Quit the app
+
+## Example session
+
+```text
+$ ./pokedexcli
+> help
+> map
+> explore kanto
+> catch pikachu
+> inspect pikachu
+> pokedex
+> exit
 ```
+
+## Project structure
+
+```text
 .
-├── main.go                          # Entry point
-├── repl.go                          # REPL implementation
-├── command_*.go                     # Command implementations
+├── main.go                          # Application entry point
+├── repl.go                          # REPL command loop
+├── command_*.go                     # Command handlers
 ├── internal/
-│   ├── pokeapi/                     # PokéAPI client
-│   │   ├── pokeapi.go               # API client setup
-│   │   ├── location_area_req.go    # Location area requests
-│   │   └── types_location_area.go  # Data types
-│   └── pokecache/                   # Caching system
-│       └── pokecache.go             # Cache implementation
+│   ├── pokeapi/                     # PokéAPI client and response models
+│   │   ├── pokeapi.go
+│   │   ├── location_area_req.go
+│   │   ├── pokemon_req.go
+│   │   └── types_location_area.go
+│   └── pokecache/                   # Time-based HTTP response cache
+│       └── pokecache.go
 ├── go.mod                           # Module definition
-└── Readme                           # This file
+└── README.md                        # Project documentation
 ```
-
-## Dependencies
-
-- **Go**: 1.16 or higher
-- **net/http**: Standard library HTTP client
-- **encoding/json**: JSON parsing
-
-## Implementation Details
-
-### Caching
-
-The application uses a time-based caching system to store API responses. Cached entries are automatically cleared after the configured interval, improving performance while keeping data relatively fresh.
-
-### API Integration
-
-The PokéAPI client handles all communication with the PokéAPI, including:
-- Pagination support for browsing location areas
-- JSON unmarshaling for structured data
-- Error handling for API failures
-
-### REPL Loop
-
-The read-eval-print loop processes user commands and maintains application state across commands, including navigation history for browsing through location areas.
 
 ## Development
 
-To run tests:
+Run the test suite:
 
 ```bash
 go test ./...
 ```
 
-To check for issues:
+Run the linter/static checks:
 
 ```bash
 go vet ./...
 ```
 
+## Notes
+
+- The CLI depends on the public PokéAPI, so it requires a working network connection.
+- Pokémon capture is randomized, so the same attempt may not succeed every time.
+
 ## License
 
-This project is created for educational purposes.
+This project is intended for educational purposes.

@@ -46,6 +46,8 @@ func startRepl(cfg *config) {
 		scanner.Scan()
 		text := scanner.Text()
 
+		clearScreen()
+
 		cleaned := clearInput(text)
 		if len(cleaned) == 0 {
 			continue
@@ -66,6 +68,10 @@ func startRepl(cfg *config) {
 		}
 	}
 
+}
+
+func clearScreen() {
+	fmt.Print("\033[H\033[2J")
 }
 
 func clearInput(str string) []string {

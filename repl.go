@@ -10,7 +10,7 @@ import (
 type CliCommand struct {
 	name        string
 	description string
-	callback    func(cfg *config) error
+	callback    func(*config, ...string) error
 }
 
 func getCommands() map[string]CliCommand {
@@ -31,9 +31,29 @@ func getCommands() map[string]CliCommand {
 			callback:    callbackMap,
 		},
 		"mapb": {
-			name:        "map",
+			name:        "mapb",
 			description: "Lists some previous location areas",
 			callback:    callbackMapb,
+		},
+		"explore": {
+			name:        "explore {location_name}",
+			description: "Explores a location area",
+			callback:    callbackExplore,
+		},
+		"catch": {
+			name:        "catch {pokemon_name}",
+			description: "Tries to catch a pokemon and add it to your pokedex",
+			callback:    callbackCatch,
+		},
+		"inspect": {
+			name:        "inspect {pokemon_name}",
+			description: "Inspects a pokemon in your pokedex",
+			callback:    callbackInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Displays all pokemon in your pokedex",
+			callback:    callbackPokedex,
 		},
 	}
 }
@@ -42,7 +62,7 @@ func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Print("> ")
+		fmt.Print("Pokedex > ")
 		scanner.Scan()
 		text := scanner.Text()
 
@@ -54,6 +74,11 @@ func startRepl(cfg *config) {
 		}
 
 		commandName := cleaned[0]
+		args := []string{}
+
+		if len(cleaned) > 1 {
+			args = cleaned[1:]
+		}
 
 		availableCommands := getCommands()
 
@@ -62,7 +87,7 @@ func startRepl(cfg *config) {
 			continue
 		}
 
-		err := command.callback(cfg)
+		err := command.callback(cfg, args...)
 		if err != nil {
 			fmt.Println(err)
 		}
